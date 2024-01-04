@@ -1,0 +1,10 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/rhel/Liteon-ngKore_E/rhel-packages/ninja/build-cmake/CMakeFiles/_CMakeLTOTest-CXX/src/foo.cpp
+

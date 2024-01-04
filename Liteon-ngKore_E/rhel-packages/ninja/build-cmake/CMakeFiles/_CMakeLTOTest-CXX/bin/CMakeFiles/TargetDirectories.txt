@@ -1,0 +1,4 @@
+/home/rhel/Liteon-ngKore_E/rhel-packages/ninja/build-cmake/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir
+/home/rhel/Liteon-ngKore_E/rhel-packages/ninja/build-cmake/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
+/home/rhel/Liteon-ngKore_E/rhel-packages/ninja/build-cmake/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
+/home/rhel/Liteon-ngKore_E/rhel-packages/ninja/build-cmake/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
