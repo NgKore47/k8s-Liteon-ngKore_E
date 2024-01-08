@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: oran-pod
+spec:
+  containers:
+  - name: oran-container
+    image: localhost:5000/oai-oran-7.2:v1.2
+    command: ["/bin/bash", "-c"]
+    args: ["LD_LIBRARY_PATH=.:/usr/local/lib64 ./nr-softmodem -O mwc_20899_newfhi_E_3450.conf --sa --reorder-thread-disable 1 --thread-pool 9,10,11,12,13,14,15"]
+    workingDir: /home/rhel/Liteon-ngKore_E/cmake_targets/ran_build/build
+    securityContext:
+      privileged: true
+      capabilities:
+        add: ["NET_ADMIN", "SYS_RAWIO", "SYS_NICE", "IPC_LOCK"]
+    resources:
+      limits:
+        cpu: "11"
+        memory: "82Gi"
+        intel.com/intel_oran_sriov: "2"
+        hugepages-1Gi: "10Gi"
+      requests:
+        cpu: "7"
+        memory: "82Gi"
+        intel.com/intel_oran_sriov: "2"
+        hugepages-1Gi: "10Gi"
+    volumeMounts:
+    - name: local-lib64
+      mountPath: /usr/local/lib64
+      readOnly: true
+    - name: local-include
+      mountPath: /usr/local/include
+      readOnly: true
+    - name: local-lib
+      mountPath: /usr/local/lib
+      readOnly: true
+    - name: usr-lib64
+      mountPath: /usr/lib64
+    - name: cpufreq
+      mountPath: /sys/devices/system/cpu
+    - name: hugepages
+      mountPath: /dev/hugepages
+  volumes:
+  - name: local-lib64
+    hostPath:
+      path: /usr/local/lib64
+  - name: local-include
+    hostPath:
+      path: /usr/local/include
+  - name: local-lib
+    hostPath:
+      path: /usr/local/lib
+  - name: usr-lib64
+    hostPath:
+      path: /usr/lib64/
+  - name: cpufreq
+    hostPath:
+      path: /sys/devices/system/cpu
+      type: Directory
+  - name: hugepages
+    hostPath:
+      path: /dev/hugepages
+      type: Directory
