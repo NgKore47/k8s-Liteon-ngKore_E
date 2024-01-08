@@ -32,19 +32,12 @@ spec:
     - name: local-lib
       mountPath: /usr/local/lib
       readOnly: true
-    # Uncomment and modify the following mounts if needed
     - name: usr-lib64
       mountPath: /usr/lib64
     - name: cpufreq
       mountPath: /sys/devices/system/cpu
     - name: hugepages
       mountPath: /dev/hugepages
-    # - name: lib-modules
-    #   mountPath: /lib/modules
-    # - name: pvc1
-    #   mountPath: /opt/fb
-    # - name: docker-sock-volume
-    #   mountPath: /var/run/docker.sock
   volumes:
   - name: local-lib64
     hostPath:
@@ -55,7 +48,6 @@ spec:
   - name: local-lib
     hostPath:
       path: /usr/local/lib
-  # Uncomment and modify the following volume definitions if needed
   - name: usr-lib64
     hostPath:
       path: /usr/lib64/
@@ -67,13 +59,3 @@ spec:
     hostPath:
       path: /dev/hugepages
       type: Directory
-  # - name: lib-modules
-  #   hostPath:
-  #     path: /lib/modules
-  # - name: pvc1
-  #   persistentVolumeClaim:
-  #     claimName: <PVC-Name>
-  # - name: docker-sock-volume
-  #   hostPath:
-  #     path: /var/run/docker.sock
-
