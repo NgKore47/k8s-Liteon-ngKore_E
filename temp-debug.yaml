@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: aria-gnb
+spec:
+  containers:
+  - name: aria-gnb-container
+    image: localhost:5001/oai-7.2-4t4r:v1
+    imagePullPolicy: Always
+    command: ["/bin/bash", "-c"]
+    args: ["sleep 10000"]
+    workingDir: /home/Project-aria/gNB/
+    securityContext:
+      privileged: true
+      capabilities:
+        add: ["NET_ADMIN", "SYS_RAWIO", "SYS_NICE", "IPC_LOCK"]
+    resources:
+      limits:
+        cpu: "11"
+        memory: "82Gi"
+        intel.com/intel_oran_sriov: "2"
+        hugepages-1Gi: "10Gi"
+      requests:
+        cpu: "7"
+        memory: "82Gi"
+        intel.com/intel_oran_sriov: "2"
+        hugepages-1Gi: "10Gi"
+    volumeMounts:
+    - name: cpufreq
+      mountPath: /sys/devices/system/cpu
+    - name: hugepages
+      mountPath: /dev/hugepages
+  volumes:
+  - name: cpufreq
+    hostPath:
+      path: /sys/devices/system/cpu
+      type: Directory
+  - name: hugepages
+    hostPath:
+      path: /dev/hugepages
+      type: Directory

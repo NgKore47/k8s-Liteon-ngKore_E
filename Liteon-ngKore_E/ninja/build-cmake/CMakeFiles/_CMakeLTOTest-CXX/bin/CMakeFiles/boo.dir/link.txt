@@ -1,1 +1,0 @@
-/opt/rh/gcc-toolset-11/root/usr/bin/c++ -flto -fno-fat-lto-objects CMakeFiles/boo.dir/main.cpp.o -o boo  libfoo.a 

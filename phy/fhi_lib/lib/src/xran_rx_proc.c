@@ -125,7 +125,7 @@ int xran_process_prach_sym(void *arg,
             p_xran_dev_ctx->sFHPrachRxBbuIoBufCtrlDecomp[tti % XRAN_N_FE_BUF_LEN][CC_ID][Ant_ID].sBufferList.pBuffers[symb_id_offset].pCtrl = mbuf;
 
             *mb_free = MBUF_KEEP;
-       }
+            }
         else {
             //print_err("pos %p iq_data_start %p size %d\n",pos, iq_data_start, size);
             print_err("iq_data_start %p size %d\n", iq_data_start, size);

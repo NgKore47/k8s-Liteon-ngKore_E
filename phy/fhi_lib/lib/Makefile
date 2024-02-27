@@ -23,11 +23,11 @@ MYCUSTOMSPACE1='------------------------------------------------------------'
 ##############################################################
 #  Tools configuration
 ##############################################################
-CC  := gcc #icc
-CPP := g++ #icpc
+CC  := gcc
+CPP := g++
 AS := as
 AR := ar
-LD := gcc#icc
+LD := gcc
 OBJDUMP := objdump
 
 ifeq ($(SHELL),cmd.exe)
@@ -57,7 +57,7 @@ endif
 
 RTE_TARGET ?= x86_64-native-linux-icc
 
-RTE_INC := $(shell PKG_CONFIG_PATH=/usr/lib64/pkgconfig:$(RTE_SDK)/build/meson-uninstalled pkgconf --cflags-only-I libdpdk)
+RTE_INC := $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):/usr/lib64/pkgconfig:$(RTE_SDK)/build/meson-uninstalled pkgconf --cflags-only-I libdpdk)
 API_DIR := $(PROJECT_DIR)/api
 SRC_DIR := $(PROJECT_DIR)/src
 ETH_DIR := $(PROJECT_DIR)/ethernet
@@ -95,8 +95,7 @@ CPP_SRC = $(SRC_DIR)/xran_compression.cpp \
 	$(SRC_DIR)/xran_bfp_cplane32.cpp \
 	$(SRC_DIR)/xran_bfp_cplane64.cpp \
 	$(SRC_DIR)/xran_bfp_uplane_9b16rb.cpp \
-	$(SRC_DIR)/xran_bfp_uplane.cpp #\
-#	$(SRC_DIR)/xran_mod_compression.cpp
+	$(SRC_DIR)/xran_bfp_uplane.cpp
 
 CPP_SRC_SNC = $(SRC_DIR)/xran_compression_snc.cpp \
 	$(SRC_DIR)/xran_bfp_cplane8_snc.cpp \
@@ -150,8 +149,8 @@ CPP_SNC_OBJTARGETS := $(addprefix $(PROJECT_OBJ_DIR)/,$(CPP_OBJS_SNC))
 
 AS_OBJTARGETS := $(addprefix $(PROJECT_OBJ_DIR)/,$(AS_OBJS))
 #-qopt-report=5 -qopt-matmul -qopt-report-phase=all
-CPP_COMP       := -O3 -DNDEBUG  -fPIE 
-CPP_COMP_SNC   := -O3 -DNDEBUG -march=icelake-server -fPIE 
+CPP_COMP       := -O3 -DNDEBUG  -fPIE
+CPP_COMP_SNC   := -O3 -DNDEBUG -march=icelake-server -fPIE
 CC_FLAGS_FULL  := $(CC_FLAGS)  $(INC) $(DEF)
 CPP_FLAGS_FULL := $(CPP_FLAGS) $(CPP_COMP) $(INC) $(DEF)
 CPP_FLAGS_FULL_SNC := $(CPP_FLAGS) $(CPP_COMP_SNC) $(INC) $(DEF)

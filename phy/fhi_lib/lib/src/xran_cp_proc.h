@@ -240,7 +240,7 @@ xran_check_upul_seqid(void *pHandle, uint8_t cc_id, uint8_t ant_id, uint8_t slot
     if(xran_upul_seq_id_num[xran_port][cc_id][ant_id] == seq_id) { /* expected sequence */
         return (XRAN_STATUS_SUCCESS);
     } else {
-        printf/*print_dbg*/("[%d]expected seqid %u received %u, slot %u, ant %u cc %u", xran_port,  xran_upul_seq_id_num[xran_port][cc_id][ant_id], seq_id, slot_id, ant_id, cc_id);
+        print_dbg("[%d]expected seqid %u received %u, slot %u, ant %u cc %u", xran_port,  xran_upul_seq_id_num[xran_port][cc_id][ant_id], seq_id, slot_id, ant_id, cc_id);
         xran_upul_seq_id_num[xran_port][cc_id][ant_id] = seq_id; // for next
         return (-1);
     }
