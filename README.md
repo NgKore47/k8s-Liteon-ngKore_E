@@ -24,7 +24,7 @@ kube-system   rke2-coredns-rke2-coredns-autoscaler-5b947fbb77-skqsq   1/1     Ru
 kube-system   rke2-ingress-nginx-controller-8rvhg                     1/1     Running     0          26h
 kube-system   rke2-metrics-server-6564db4569-dgf7n                    1/1     Running     0          26h
 ```
-- Server configured as per [Origin](https://github.com/NgKore47/Liteon-ngKore_E)
+- Server configured as per [Origin](https://github.com/NgKore47/Liteon-ngKore_E/tree/fhi_4t_4r)
 
 ### Build a container image
 you can make changes to `Dockerfile` as per usecase
