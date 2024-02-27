@@ -1,0 +1,8 @@
+[1/8] Generating LDPC cnProc header files for 128-bit SIMD
+[2/8] Generating LDPC bnProc header files for 128-bit SIMD
+[3/8] Checking validity of VCD files
+[4/8] Building C object CMakeFiles/L2_NR.dir/openair2/LAYER2/nr_pdcp/nr_pdcp_ue_manager.c.o
+[5/8] Building C object CMakeFiles/nr-cuup.dir/openair2/LAYER2/nr_pdcp/nr_pdcp_ue_manager.c.o
+[6/8] Linking CXX executable nr-cuup
+[7/8] Linking CXX static library libL2_NR.a
+[8/8] Linking CXX executable nr-softmodem

@@ -1,81 +1,63 @@
-# Use RHEL 8.7 as the base image
-FROM registry.access.redhat.com/ubi8/ubi:8.7
+# Use a base image with a compatible Linux distribution
+FROM ubuntu:22.04
 
-# Install gcc11 and Development Tools
-RUN yum install gcc-toolset-11 -y && \
-    dnf groupinstall "Development Tools" -y && \
-    dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y && \
-    yum install -y git cmake lksctp-tools lksctp-tools-devel lksctp-tools-doc openssl-devel && \
-    yum install -y libhugetlbfs libstdc++ numactl iproute kmod pciutils libaio libaio-devel numactl-devel net-tools ethtool && \
-    yum install -y gtk3 mesa-libgbm at-spi2-core libdrm xdg-utils libxcb libnotify && \
-    yum clean all
+# Avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
 
-#
-RUN scl enable gcc-toolset-11 bash
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    xz-utils \
+    net-tools \
+    meson \
+    wget \
+    pkg-config \
+    linux-tools-generic \
+    libnuma-dev \
+    ninja-build \
+    && rm -rf /var/lib/apt/lists/*
 
-# Clone and build Ninja
-RUN git clone https://github.com/ninja-build/ninja.git && \
-    cd ninja && \
-    cmake -Bbuild-cmake && \
-    cd build-cmake && \
-    make && \
-    make install && \
-    cp /usr/local/bin/ninja /usr/bin/
+# Download and install DPDK
+RUN wget http://fast.dpdk.org/rel/dpdk-20.11.7.tar.xz \
+    && tar xvf dpdk-20.11.7.tar.xz \
+    && cd dpdk-stable-20.11.7 \
+    && meson build \
+    && ninja -C build \
+    && ninja install -C build
 
-# install meson
-RUN dnf install python3-requests -y
-RUN dnf install python3-pip -y
-RUN pip3 install meson  
+# Setup environment variables for DPDK
+ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/
+ENV RTE_SDK=/dpdk-stable-20.11.7
+ENV RTE_TARGET=x86_64-native-linuxapp-gcc
 
-# Copy DPDK source from host and build it
-COPY dpdk-stable-20.11.7 /home/rhel/dpdk-stable-20.11.7/
-RUN cd /home/rhel/dpdk-stable-20.11.7 && \
-    /usr/local/bin/meson build && \
-    ninja -C build && \
-    ninja -C build install
 
-# Setting environment variables for DPDK
-ENV RTE_SDK=/home/rhel/dpdk-stable-20.11.7 \
-    RTE_TARGET=x86_64-native-linuxapp-gcc
+# Copy the Liteon-ngKore_E repository
+COPY openairinterface5g /openairinterface5g
+COPY phy /phy
 
-# Copy required directories and set work directory
-COPY Liteon-ngKore_E/ /home/rhel/Liteon-ngKore_E
-COPY phy/ /home/rhel/phy
+# Set additional environment variables for building the PHY
+ENV XRAN_DIR=/phy/fhi_lib
+ENV XRAN_LIB_DIR=/phy/fhi_lib/lib/build
 
-# install extra deps
-WORKDIR /home/rhel/Liteon-ngKore_E/rhel-packages/
+# Build the XRAN library
+RUN cd /phy/fhi_lib/lib/ \
+    && make clean \
+    && make XRAN_LIB_SO=1
 
-RUN dnf install libtool -y
-RUN dnf install blas -y
-RUN dnf install lapack -y
+# Build OAI gNB
+RUN apt-get update && apt-get install -y libnuma-dev \
+    && cd /openairinterface5g/cmake_targets/ \
+    && ./build_oai -I \
+    && ./build_oai --gNB --ninja -t oran_fhlib_5g --cmake-opt -Dxran_LOCATION=/phy/fhi_lib/lib
 
-RUN dnf install -y epel-release
-#    dnf install -y guile-devel
+# Cleanup the build dependencies and files not needed in the final image
+RUN apt-get purge -y --auto-remove wget xz-utils git meson ninja-build \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* 
 
-RUN dnf localinstall ./gc-7.6.4-3.el8.i686.rpm -y && \
-    dnf localinstall ./gc-devel-7.6.4-3.el8.i686.rpm -y && \
-    dnf localinstall ./gc-devel-7.6.4-3.el8.x86_64.rpm -y && \
-    dnf localinstall ./glibc-2.28-236.el8.7.i686.rpm -y && \
-    dnf localinstall ./glibc-gconv-extra-2.28-236.el8.7.i686.rpm -y && \
-    dnf localinstall ./libatomic_ops-7.6.2-3.el8.i686.rpm -y && \
-    dnf localinstall ./libgcc-8.5.0-20.el8.i686.rpm -y && \
-    dnf localinstall ./libstdc++-8.5.0-20.el8.i686.rpm -y
+# Set the final working directory
+COPY entrypoint.sh /
 
-RUN dnf localinstall ./guile-devel-2.0.14-7.el8.x86_64.rpm -y    
-RUN dnf localinstall ./gc-devel-7.6.4-3.el8.x86_64.rpm -y
-RUN dnf localinstall ./libconfig-devel-1.5-9.el8.x86_64.rpm -y
-RUN dnf localinstall ./pkgconf-pkg-config-1.4.2-1.el8.x86_64.rpm -y
-RUN dnf localinstall ./blas-devel-3.8.0-8.el8.x86_64.rpm -y
-RUN dnf localinstall ./lapack-devel-3.8.0-8.el8.x86_64.rpm -y
-RUN dnf localinstall ./ninja-build-1.8.2-1.el8.x86_64.rpm -y
+ENTRYPOINT ["/entrypoint.sh"]
 
-# set default workdir
-WORKDIR /home/rhel/Liteon-ngKore_E/cmake_targets/ran_build/build/
-
-# copy and run entrypoint.sh
-COPY entrypoint.sh /home/rhel/
-
-ENTRYPOINT ["/home/rhel/entrypoint.sh"]
-
-# Set a default command or entrypoint
+# Command to run when starting the container
 CMD ["bash"]
